@@ -1,0 +1,6 @@
+{
+  "test_config": {
+    "files": ["test_files/test_mixed_3pages_*.pdf"]
+  },
+  "providers": ["azure", "gcp"]
+}

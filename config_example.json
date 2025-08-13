@@ -1,0 +1,16 @@
+{
+  "azure": {
+    "enabled": true,
+    "api_key": "your-azure-openai-api-key-here",
+    "endpoint": "https://your-resource.openai.azure.com/",
+    "deployment_name": "gpt-4-vision",
+    "api_version": "2024-02-15-preview"
+  },
+  "gcp": {
+    "enabled": true,
+    "service_account_json": "{\n  \"type\": \"service_account\",\n  \"project_id\": \"your-project-id\",\n  \"private_key_id\": \"your-private-key-id\",\n  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n\",\n  \"client_email\": \"your-service-account@your-project.iam.gserviceaccount.com\",\n  \"client_id\": \"your-client-id\",\n  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\n  \"token_uri\": \"https://oauth2.googleapis.com/token\",\n  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\n  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/your-service-account%40your-project.iam.gserviceaccount.com\"\n}",
+    "project_id": "your-project-id",
+    "location": "us-central1",
+    "endpoint_id": "your-endpoint-id"
+  }
+}

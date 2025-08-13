@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: mistral-ocr-app
+    ports:
+      - "82:80"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+    volumes:
+      - ./uploads:/app/uploads
+      - ./test_files:/app/test_files
+      - ./results:/app/results
+      - ./logs:/app/logs
+      - ./mistral_ocr_test.db:/app/mistral_ocr_test.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

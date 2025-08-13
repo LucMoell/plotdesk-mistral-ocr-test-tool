@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mistral OCR Test Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%) !important;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            border-bottom: none;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .config-card {
+            transition: all 0.3s ease;
+        }
+
+        .config-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-animated {
+            animation: progress-animation 2s ease-in-out infinite;
+        }
+
+        @keyframes progress-animation {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-card h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card h6 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-scenario {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 0.75rem 0;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .test-scenario:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .test-scenario h6 {
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .file-upload-area {
+            border: 3px dashed var(--primary-color);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--success-color);
+            background-color: #e8f5e8;
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--success-color);
+            background-color: #d4edda;
+            transform: scale(1.02);
+        }
+
+        .file-upload-area i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .status-running { background-color: var(--warning-color); }
+        .status-success { background-color: var(--success-color); }
+        .status-error { background-color: var(--danger-color); }
+        .status-waiting { background-color: #6c757d; }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #1e7e34 100%);
+            border: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e0a800 100%);
+            border: none;
+            color: #212529;
+        }
+
+        .progress {
+            border-radius: 10px;
+            height: 1rem;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, #0056b3 100%);
+        }
+
+        .badge {
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .modal-header {
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+        }
+
+        .provider-stats-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .provider-stats-card h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .provider-stats-card h6 {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+
+        .test-history-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .test-history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h5 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .empty-state p {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-eye"></i> Mistral OCR Test Suite
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-database"></i> SQLite Database
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Configuration Panel -->
+            <div class="col-lg-4">
+                <div class="card config-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-cog"></i> Konfiguration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="configForm">
+                            <!-- Azure Configuration -->
+                            <div class="mb-4">
+                                <h6 class="text-primary">
+                                    <i class="fab fa-microsoft"></i> Azure OpenAI Mistral
+                                </h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="azureEnabled">
+                                    <label class="form-check-label" for="azureEnabled">
+                                        Azure aktivieren
+                                    </label>
+                                </div>
+                                <div id="azureConfig" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">API Key</label>
+                                        <input type="password" class="form-control" id="azureApiKey" placeholder="Azure API Key">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Endpoint</label>
+                                        <input type="text" class="form-control" id="azureEndpoint" placeholder="https://your-resource.openai.azure.com/">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Deployment Name</label>
+                                        <input type="text" class="form-control" id="azureDeployment" placeholder="mistral-large-latest">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">API Version</label>
+                                        <input type="text" class="form-control" id="azureApiVersion" placeholder="2024-02-15-preview" value="2024-02-15-preview">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- GCP Configuration -->
+                            <div class="mb-4">
+                                <h6 class="text-success">
+                                    <i class="fab fa-google"></i> Google Cloud Platform
+                                </h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="gcpEnabled">
+                                    <label class="form-check-label" for="gcpEnabled">
+                                        GCP aktivieren
+                                    </label>
+                                </div>
+                                <div id="gcpConfig" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Service Account JSON</label>
+                                        <textarea class="form-control" id="gcpServiceAccount" rows="4" placeholder="Service Account JSON Content"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Project ID</label>
+                                        <input type="text" class="form-control" id="gcpProjectId" placeholder="your-project-id">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="gcpLocation" placeholder="us-central1" value="us-central1">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Endpoint ID</label>
+                                        <input type="text" class="form-control" id="gcpEndpointId" placeholder="your-endpoint-id">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save"></i> Konfiguration speichern
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Test Scenarios -->
+                <div class="card config-card mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-flask"></i> Test-Szenarien</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Provider-Auswahl:</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="testAzure" checked>
+                                <label class="form-check-label" for="testAzure">
+                                    <i class="fab fa-microsoft text-primary"></i> Azure OpenAI
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="testGcp" checked>
+                                <label class="form-check-label" for="testGcp">
+                                    <i class="fab fa-google text-success"></i> Google Cloud Platform
+                                </label>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-2" onclick="generateTestFiles()">
+                                <i class="fas fa-file-pdf"></i> Test-Dateien generieren
+                            </button>
+                        </div>
+                        
+                        <div id="testScenarios">
+                            <div class="test-scenario">
+                                <h6>Kleine Dateien (1-3 Seiten)</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="small" checked>
+                                    <label class="form-check-label">1-3 Seiten, gemischter Inhalt</label>
+                                </div>
+                            </div>
+                            <div class="test-scenario">
+                                <h6>Mittlere Dateien (5-10 Seiten)</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="medium" checked>
+                                    <label class="form-check-label">5-10 Seiten, textlastig</label>
+                                </div>
+                            </div>
+                            <div class="test-scenario">
+                                <h6>Große Dateien (20+ Seiten)</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="large">
+                                    <label class="form-check-label">20+ Seiten, bildlastig</label>
+                                </div>
+                            </div>
+                            <div class="test-scenario">
+                                <h6>Stress-Test</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="stress">
+                                    <label class="form-check-label">Parallele Verarbeitung</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success w-100 mt-3" onclick="startBatchTest()">
+                            <i class="fas fa-play"></i> Batch-Test starten
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Test History -->
+                <div class="card config-card mt-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Test-Historie</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="testHistory">
+                            <div class="empty-state">
+                                <i class="fas fa-history"></i>
+                                <h5>Keine Tests durchgeführt</h5>
+                                <p>Führen Sie Tests durch, um die Historie zu sehen</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-warning btn-sm mt-2" onclick="loadTestHistory()">
+                            <i class="fas fa-refresh"></i> Historie laden
+                        </button>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- File Upload -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-upload"></i> Datei-Upload</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="file-upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h5>Datei hier ablegen oder klicken zum Auswählen</h5>
+                            <p class="text-muted">Unterstützte Formate: PDF</p>
+                            <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+                            <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open"></i> Datei auswählen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Monitoring -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Live-Monitoring</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Fortschritt</h6>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar progress-animated" id="progressBar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small id="progressText">0%</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Token-Verbrauch</h6>
+                                    <h4 id="tokenUsage">0</h4>
+                                    <small>Total Tokens</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Response-Zeit</h6>
+                                    <h4 id="avgResponseTime">0s</h4>
+                                    <small>Durchschnitt</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Erfolgsrate</h6>
+                                    <h4 id="successRate">0%</h4>
+                                    <small>Verarbeitete Seiten</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Status -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-tasks"></i> Task-Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="taskList">
+                            <p class="text-muted">Keine aktiven Tasks</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Provider Statistics -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Provider-spezifische Statistiken</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0"><i class="fab fa-microsoft"></i> Azure OpenAI</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="azureStats">
+                                            <div class="empty-state">
+                                                <i class="fas fa-chart-bar"></i>
+                                                <h5>Keine Daten verfügbar</h5>
+                                                <p>Führen Sie Tests durch, um Statistiken zu sehen</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0"><i class="fab fa-google"></i> Google Cloud Platform</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="gcpStats">
+                                            <div class="empty-state">
+                                                <i class="fas fa-chart-bar"></i>
+                                                <h5>Keine Daten verfügbar</h5>
+                                                <p>Führen Sie Tests durch, um Statistiken zu sehen</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <canvas id="comparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Statistics -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Detaillierte Statistiken</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="tokenChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div id="detailedStats">
+                                    <p class="text-muted">Statistiken werden nach Abschluss der Tests angezeigt</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Fehler aufgetreten</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="errorDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let activeTasks = new Map();
+        let performanceChart, tokenChart, comparisonChart;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            setupEventListeners();
+            loadConfiguration();
+            loadProviderStatistics();
+            loadTestHistory();
+        });
+
+        function initializeCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Response-Zeit (s)',
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Performance über Zeit'
+                        }
+                    }
+                }
+            });
+
+            // Token Chart
+            const tokenCtx = document.getElementById('tokenChart').getContext('2d');
+            tokenChart = new Chart(tokenCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Input Tokens', 'Output Tokens'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#FF6384', '#36A2EB']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Token-Verbrauch'
+                        }
+                    }
+                }
+            });
+
+            // Comparison Chart
+            const compCtx = document.getElementById('comparisonChart').getContext('2d');
+            comparisonChart = new Chart(compCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Azure', 'GCP'],
+                    datasets: [{
+                        label: 'Erfolgsrate (%)',
+                        data: [0, 0],
+                        backgroundColor: ['#007bff', '#28a745']
+                    }, {
+                        label: 'Durchschnittliche Response-Zeit (s)',
+                        data: [0, 0],
+                        backgroundColor: ['#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Provider-Vergleich'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            // Configuration toggles
+            document.getElementById('azureEnabled').addEventListener('change', function() {
+                document.getElementById('azureConfig').style.display = this.checked ? 'block' : 'none';
+            });
+            
+            document.getElementById('gcpEnabled').addEventListener('change', function() {
+                document.getElementById('gcpConfig').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Configuration form
+            document.getElementById('configForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveConfiguration();
+            });
+
+            // File upload
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        function saveConfiguration() {
+            const config = {
+                azure: {
+                    enabled: document.getElementById('azureEnabled').checked,
+                    api_key: document.getElementById('azureApiKey').value,
+                    endpoint: document.getElementById('azureEndpoint').value,
+                    deployment_name: document.getElementById('azureDeployment').value,
+                    api_version: document.getElementById('azureApiVersion').value
+                },
+                gcp: {
+                    enabled: document.getElementById('gcpEnabled').checked,
+                    service_account: document.getElementById('gcpServiceAccount').value,
+                    project_id: document.getElementById('gcpProjectId').value,
+                    location: document.getElementById('gcpLocation').value,
+                    endpoint_id: document.getElementById('gcpEndpointId').value
+                }
+            };
+
+            fetch('/api/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showNotification('Konfiguration gespeichert!', 'success');
+                } else {
+                    showNotification('Fehler beim Speichern der Konfiguration', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Speichern der Konfiguration', 'error');
+            });
+        }
+
+        function loadConfiguration() {
+            fetch('/api/config')
+            .then(response => response.json())
+            .then(config => {
+                if (config.azure) {
+                    document.getElementById('azureEnabled').checked = config.azure.enabled || false;
+                    document.getElementById('azureApiKey').value = config.azure.api_key || '';
+                    document.getElementById('azureEndpoint').value = config.azure.endpoint || '';
+                    document.getElementById('azureDeployment').value = config.azure.deployment_name || '';
+                    document.getElementById('azureApiVersion').value = config.azure.api_version || '';
+                    document.getElementById('azureConfig').style.display = config.azure.enabled ? 'block' : 'none';
+                }
+                
+                if (config.gcp) {
+                    document.getElementById('gcpEnabled').checked = config.gcp.enabled || false;
+                    document.getElementById('gcpServiceAccount').value = config.gcp.service_account || '';
+                    document.getElementById('gcpProjectId').value = config.gcp.project_id || '';
+                    document.getElementById('gcpLocation').value = config.gcp.location || '';
+                    document.getElementById('gcpEndpointId').value = config.gcp.endpoint_id || '';
+                    document.getElementById('gcpConfig').style.display = config.gcp.enabled ? 'block' : 'none';
+                }
+            });
+        }
+
+        function handleFileUpload(file) {
+            if (!file.type.includes('pdf')) {
+                showNotification('Nur PDF-Dateien werden unterstützt', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    addTask(data.task_id, file.name, 'running');
+                    showNotification(`Datei ${file.name} wird verarbeitet`, 'success');
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Upload', 'error');
+            });
+        }
+
+        function generateTestFiles() {
+            const scenarios = [];
+            const checkboxes = document.querySelectorAll('#testScenarios input[type="checkbox"]:checked');
+            
+            checkboxes.forEach(checkbox => {
+                switch(checkbox.value) {
+                    case 'small':
+                        scenarios.push({pages: 3, content_type: 'mixed'});
+                        break;
+                    case 'medium':
+                        scenarios.push({pages: 10, content_type: 'text_heavy'});
+                        break;
+                    case 'large':
+                        scenarios.push({pages: 25, content_type: 'image_heavy'});
+                        break;
+                    case 'stress':
+                        scenarios.push({pages: 50, content_type: 'mixed'});
+                        break;
+                }
+            });
+
+            if (scenarios.length === 0) {
+                showNotification('Bitte mindestens ein Test-Szenario auswählen', 'warning');
+                return;
+            }
+
+            // Get selected providers
+            const selectedProviders = [];
+            if (document.getElementById('testAzure').checked) selectedProviders.push('azure');
+            if (document.getElementById('testGcp').checked) selectedProviders.push('gcp');
+
+            if (selectedProviders.length === 0) {
+                showNotification('Bitte mindestens einen Provider auswählen', 'warning');
+                return;
+            }
+
+            fetch('/api/generate-test-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    scenarios: scenarios,
+                    providers: selectedProviders
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    addTask(data.task_id, 'Test-Dateien generieren', 'running');
+                    showNotification('Test-Dateien werden generiert', 'success');
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Generieren der Test-Dateien', 'error');
+            });
+        }
+
+        function startBatchTest() {
+            const testConfig = {
+                files: [
+                    'test_files/test_mixed_3pages_*.pdf',
+                    'test_files/test_text_heavy_10pages_*.pdf',
+                    'test_files/test_image_heavy_25pages_*.pdf'
+                ]
+            };
+
+            // Get selected providers
+            const selectedProviders = [];
+            if (document.getElementById('testAzure').checked) selectedProviders.push('azure');
+            if (document.getElementById('testGcp').checked) selectedProviders.push('gcp');
+
+            if (selectedProviders.length === 0) {
+                showNotification('Bitte mindestens einen Provider auswählen', 'warning');
+                return;
+            }
+
+            fetch('/api/batch-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    test_config: testConfig,
+                    providers: selectedProviders
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    addTask(data.task_id, 'Batch-Test', 'running');
+                    showNotification('Batch-Test gestartet', 'success');
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Starten des Batch-Tests', 'error');
+            });
+        }
+
+        function addTask(taskId, name, status) {
+            activeTasks.set(taskId, {name, status});
+            updateTaskList();
+            pollTaskStatus(taskId);
+        }
+
+        function updateTaskProgress(data) {
+            const task = activeTasks.get(data.task_id);
+            if (task) {
+                task.status = data.status;
+                task.progress = data.progress || 0;
+                task.result = data.result;
+                
+                updateTaskList();
+                updateMetrics(data);
+                
+                if (data.status === 'completed' || data.status === 'failed') {
+                    activeTasks.delete(data.task_id);
+                    if (data.status === 'completed') {
+                        showNotification(`Task ${task.name} abgeschlossen`, 'success');
+                        updateStatistics(data.result);
+                    } else {
+                        showNotification(`Task ${task.name} fehlgeschlagen`, 'error');
+                        showErrorDetails(data.error);
+                    }
+                }
+            }
+        }
+
+        function updateTaskList() {
+            const taskList = document.getElementById('taskList');
+            
+            if (activeTasks.size === 0) {
+                taskList.innerHTML = '<p class="text-muted">Keine aktiven Tasks</p>';
+                return;
+            }
+            
+            let html = '';
+            activeTasks.forEach((task, taskId) => {
+                const statusClass = task.status === 'running' ? 'status-running' : 
+                                  task.status === 'completed' ? 'status-success' : 
+                                  task.status === 'failed' ? 'status-error' : 'status-waiting';
+                
+                html += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="status-indicator ${statusClass}"></span>
+                            <strong>${task.name}</strong>
+                        </div>
+                        <div>
+                            ${task.progress ? `<span class="badge bg-primary">${task.progress.toFixed(1)}%</span>` : ''}
+                            <span class="badge bg-secondary">${task.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            taskList.innerHTML = html;
+        }
+
+        function updateMetrics(data) {
+            if (data.progress !== undefined) {
+                document.getElementById('progressBar').style.width = data.progress + '%';
+                document.getElementById('progressText').textContent = data.progress.toFixed(1) + '%';
+            }
+            
+            if (data.result && data.result.statistics) {
+                const stats = data.result.statistics;
+                
+                if (stats.token_usage) {
+                    document.getElementById('tokenUsage').textContent = stats.token_usage.total_tokens || 0;
+                    
+                    // Update token chart
+                    tokenChart.data.datasets[0].data = [
+                        stats.token_usage.input_tokens || 0,
+                        stats.token_usage.output_tokens || 0
+                    ];
+                    tokenChart.update();
+                }
+                
+                if (stats.performance) {
+                    document.getElementById('avgResponseTime').textContent = 
+                        (stats.performance.average_response_time || 0).toFixed(2) + 's';
+                }
+                
+                if (stats.summary) {
+                    document.getElementById('successRate').textContent = 
+                        (stats.summary.success_rate || 0).toFixed(1) + '%';
+                }
+            }
+        }
+
+        function updateStatistics(result) {
+            if (!result || !result.statistics) return;
+            
+            const stats = result.statistics;
+            const detailedStats = document.getElementById('detailedStats');
+            
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Zusammenfassung</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Gesamtseiten:</strong> ${stats.summary.total_pages}</li>
+                            <li><strong>Erfolgreich:</strong> ${stats.summary.successful_pages}</li>
+                            <li><strong>Fehlgeschlagen:</strong> ${stats.summary.failed_pages}</li>
+                            <li><strong>Erfolgsrate:</strong> ${stats.summary.success_rate.toFixed(1)}%</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Performance</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Durchschnittliche Response-Zeit:</strong> ${(stats.performance.average_response_time || 0).toFixed(2)}s</li>
+                            <li><strong>Minimale Response-Zeit:</strong> ${(stats.performance.min_response_time || 0).toFixed(2)}s</li>
+                            <li><strong>Maximale Response-Zeit:</strong> ${(stats.performance.max_response_time || 0).toFixed(2)}s</li>
+                            <li><strong>Gesamtverarbeitungszeit:</strong> ${(stats.performance.total_processing_time || 0).toFixed(2)}s</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            if (stats.errors && stats.errors.total_errors > 0) {
+                html += `
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Fehler (${stats.errors.total_errors})</h6>
+                            <div class="alert alert-warning">
+                                ${stats.errors.error_details.map(error => 
+                                    `<div><strong>Seite ${error.page_number}:</strong> ${error.error}</div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailedStats.innerHTML = html;
+        }
+
+        function pollTaskStatus(taskId) {
+            const pollInterval = setInterval(() => {
+                fetch(`/api/task-status/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTaskProgress({task_id: taskId, ...data});
+                    
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        clearInterval(pollInterval);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error polling task status:', error);
+                    clearInterval(pollInterval);
+                });
+            }, 2000);
+        }
+
+        function showNotification(message, type) {
+            // Simple notification - you could use a proper notification library
+            const alertClass = type === 'success' ? 'alert-success' : 
+                             type === 'error' ? 'alert-danger' : 
+                             type === 'warning' ? 'alert-warning' : 'alert-info';
+            
+            const alert = document.createElement('div');
+            alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function showErrorDetails(error) {
+            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            document.getElementById('errorDetails').innerHTML = `
+                <div class="alert alert-danger">
+                    <pre>${JSON.stringify(error, null, 2)}</pre>
+                </div>
+            `;
+            errorModal.show();
+        }
+
+        function loadTestHistory() {
+            fetch('/api/test-history')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayTestHistory(data.tests);
+                } else {
+                    showNotification('Fehler beim Laden der Test-Historie', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Laden der Test-Historie', 'error');
+            });
+        }
+
+        function displayTestHistory(tests) {
+            const historyDiv = document.getElementById('testHistory');
+            
+            if (tests.length === 0) {
+                historyDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h5>Keine Tests durchgeführt</h5>
+                        <p>Führen Sie Tests durch, um die Historie zu sehen</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            tests.forEach(test => {
+                const timestamp = new Date(test.created_at).toLocaleString('de-DE');
+                const providers = test.providers.join(', ');
+                
+                html += `
+                    <div class="test-history-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${test.filename}</strong><br>
+                                <small class="text-muted">
+                                    <i class="fas fa-cloud"></i> Provider: ${providers}
+                                </small><br>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> ${timestamp}
+                                </small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="showTestDetails('${test.task_id}')">
+                                <i class="fas fa-eye"></i> Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyDiv.innerHTML = html;
+        }
+
+        function showTestDetails(taskId) {
+            fetch(`/api/test-details/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayTestDetails(data.test);
+                } else {
+                    showNotification('Fehler beim Laden der Test-Details', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Laden der Test-Details', 'error');
+            });
+        }
+
+        function displayTestDetails(test) {
+            const modal = new bootstrap.Modal(document.getElementById('errorModal'));
+            document.getElementById('errorModal').querySelector('.modal-title').innerHTML = 
+                '<i class="fas fa-info-circle"></i> Test-Details';
+            
+            let html = `
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Test-Informationen</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Datei:</strong> ${test.filename}</li>
+                            <li><strong>Provider:</strong> ${test.providers.join(', ')}</li>
+                            <li><strong>Zeitstempel:</strong> ${new Date(test.timestamp).toLocaleString('de-DE')}</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Provider-specific results
+            Object.keys(test.results).forEach(provider => {
+                const result = test.results[provider];
+                const stats = result.statistics;
+                
+                html += `
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6><i class="fab fa-${provider === 'azure' ? 'microsoft' : 'google'}"></i> ${provider.toUpperCase()}</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Zusammenfassung</h6>
+                                    <ul class="list-unstyled">
+                                        <li><strong>Gesamtseiten:</strong> ${stats.summary.total_pages}</li>
+                                        <li><strong>Erfolgreich:</strong> ${stats.summary.successful_pages}</li>
+                                        <li><strong>Fehlgeschlagen:</strong> ${stats.summary.failed_pages}</li>
+                                        <li><strong>Erfolgsrate:</strong> ${stats.summary.success_rate.toFixed(1)}%</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Performance</h6>
+                                    <ul class="list-unstyled">
+                                        <li><strong>Durchschnittliche Response-Zeit:</strong> ${stats.performance.average_response_time.toFixed(2)}s</li>
+                                        <li><strong>Minimale Response-Zeit:</strong> ${stats.performance.min_response_time.toFixed(2)}s</li>
+                                        <li><strong>Maximale Response-Zeit:</strong> ${stats.performance.max_response_time.toFixed(2)}s</li>
+                                        <li><strong>Gesamtverarbeitungszeit:</strong> ${stats.performance.total_processing_time.toFixed(2)}s</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <h6>Token-Verbrauch</h6>
+                                    <ul class="list-unstyled">
+                                        <li><strong>Total Tokens:</strong> ${stats.token_usage.total_tokens}</li>
+                                        <li><strong>Input Tokens:</strong> ${stats.token_usage.input_tokens}</li>
+                                        <li><strong>Output Tokens:</strong> ${stats.token_usage.output_tokens}</li>
+                                        <li><strong>Durchschnitt pro Seite:</strong> ${stats.token_usage.average_tokens_per_page.toFixed(1)}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('errorDetails').innerHTML = html;
+            modal.show();
+        }
+
+        function loadProviderStatistics() {
+            fetch('/api/statistics')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayProviderStatistics(data.statistics);
+                    updateComparisonChart(data.statistics);
+                } else {
+                    showNotification('Fehler beim Laden der Statistiken', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Fehler beim Laden der Statistiken', 'error');
+            });
+        }
+
+        function displayProviderStatistics(statistics) {
+            // Azure Statistics
+            if (statistics.azure) {
+                const azureStats = document.getElementById('azureStats');
+                const stats = statistics.azure;
+                
+                azureStats.innerHTML = `
+                    <div class="provider-stats-card">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6><i class="fas fa-check-circle text-success"></i> Erfolgsrate</h6>
+                                <h4 class="text-primary">${stats.summary.success_rate.toFixed(1)}%</h4>
+                            </div>
+                            <div class="col-6">
+                                <h6><i class="fas fa-clock text-info"></i> Response-Zeit</h6>
+                                <h4 class="text-primary">${stats.performance.average_response_time.toFixed(2)}s</h4>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <h6><i class="fas fa-tokens text-warning"></i> Total Tokens</h6>
+                                <h4 class="text-primary">${stats.token_usage.total_tokens}</h4>
+                            </div>
+                            <div class="col-6">
+                                <h6><i class="fas fa-exclamation-triangle text-danger"></i> Fehler</h6>
+                                <h4 class="text-danger">${stats.errors.total_errors}</h4>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6><i class="fas fa-chart-line text-info"></i> Details</h6>
+                                <small class="text-muted">
+                                    Seiten: ${stats.summary.total_pages} | 
+                                    Erfolgreich: ${stats.summary.successful_pages} | 
+                                    Fehlgeschlagen: ${stats.summary.failed_pages}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('azureStats').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <h5>Keine Azure-Daten</h5>
+                        <p>Führen Sie Azure-Tests durch</p>
+                    </div>
+                `;
+            }
+
+            // GCP Statistics
+            if (statistics.gcp) {
+                const gcpStats = document.getElementById('gcpStats');
+                const stats = statistics.gcp;
+                
+                gcpStats.innerHTML = `
+                    <div class="provider-stats-card">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6><i class="fas fa-check-circle text-success"></i> Erfolgsrate</h6>
+                                <h4 class="text-success">${stats.summary.success_rate.toFixed(1)}%</h4>
+                            </div>
+                            <div class="col-6">
+                                <h6><i class="fas fa-clock text-info"></i> Response-Zeit</h6>
+                                <h4 class="text-success">${stats.performance.average_response_time.toFixed(2)}s</h4>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <h6><i class="fas fa-tokens text-warning"></i> Total Tokens</h6>
+                                <h4 class="text-success">${stats.token_usage.total_tokens}</h4>
+                            </div>
+                            <div class="col-6">
+                                <h6><i class="fas fa-exclamation-triangle text-danger"></i> Fehler</h6>
+                                <h4 class="text-danger">${stats.errors.total_errors}</h4>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6><i class="fas fa-chart-line text-info"></i> Details</h6>
+                                <small class="text-muted">
+                                    Seiten: ${stats.summary.total_pages} | 
+                                    Erfolgreich: ${stats.summary.successful_pages} | 
+                                    Fehlgeschlagen: ${stats.summary.failed_pages}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('gcpStats').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <h5>Keine GCP-Daten</h5>
+                        <p>Führen Sie GCP-Tests durch</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateComparisonChart(statistics) {
+            if (comparisonChart && statistics.azure && statistics.gcp) {
+                comparisonChart.data.datasets[0].data = [
+                    statistics.azure.summary.success_rate,
+                    statistics.gcp.summary.success_rate
+                ];
+                comparisonChart.data.datasets[1].data = [
+                    statistics.azure.performance.average_response_time,
+                    statistics.gcp.performance.average_response_time
+                ];
+                comparisonChart.update();
+            }
+        }
+
+
+    </script>
+</body>
+</html>
