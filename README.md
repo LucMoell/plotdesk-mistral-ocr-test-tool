@@ -1,0 +1,1 @@
+# plotdesk-mistral-ocr-test-tool
